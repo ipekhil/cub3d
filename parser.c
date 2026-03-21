@@ -96,7 +96,7 @@ int parse_file(char *filename, t_game *game)
 		return (-1);
 	if (!validate_map(game))
 		return (-1);
-	if (validate_walls(game) < 0)
+	if (!validate_walls(game))
 		return (-1);
 	
 	int i = 0;
