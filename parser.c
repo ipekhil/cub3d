@@ -70,7 +70,7 @@ int parse_file(char *filename, t_game *game)
 		if(empty_line(line))
 			;
 		else if (map_line(line))
-			ft_printf("MAP %s", line);
+			;
 		else//baştaki 6 satır
 		{
 			if (parse_texture_line(line, game) < 0)
@@ -90,10 +90,11 @@ int parse_file(char *filename, t_game *game)
 
 	game->height = map_height(filename);
 	if (!game->height)
-		return (-1);
+	return (-1);
 	game->map = read_map(filename, game->height);
 	if (!game->map)
-		return (-1);
+	return (-1);
+	
 	if (!validate_map(game))
 		return (-1);
 	if (!validate_walls(game))

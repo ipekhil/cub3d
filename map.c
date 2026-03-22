@@ -93,14 +93,14 @@ int	validate_map(t_game *game)
 		while (game -> map[row][++col])
 		{
 			if (!check_map_cell(game, row, col, &player_count))
-			{
-				ft_printf("Error\nmultiple player!!");
 				return (0);
-			}
 		}
 	}
 	if (player_count != 1)
+	{
+		ft_printf("Error\nOyuncu sayısı 1 değil");
 		return (0);
+	}
 	return (1);
 }
 
