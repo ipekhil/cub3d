@@ -49,5 +49,20 @@ int	key_hook(int keycode, t_game	*game)
 		move_player(game, sin(game->angle), -cos(game->angle));
 	else if (keycode == 100)//D
 		move_player(game, -sin(game->angle), cos(game->angle));
+	update_dir(game);
+	render(game);
 	return (0);
+}
+
+/*
+dir ve plane her zaman birbirlerine dik olmalı. trigonometrik olarak cos un tersi -sin
+sinin tersi cos buna göre birbirlerinin tersini alıyoruz. 90 derece döndürmek gibi de düşünebiliriz
+0,66 ile çarpmamızın sebebi açının yani ekranın genişliği gibi düşünebiliriz.
+*/
+void	update_dir(t_game *game)
+{
+	game->dirX = cos(game->angle);
+	game->dirY = sin(game->angle);
+	game->planeX = -sin(game->angle) * 0.66;
+	game->planeY = cos(game->angle) * 0.66;
 }

@@ -44,15 +44,30 @@ typedef struct s_game
 	double		planeX;
 	double		planeY;
 	t_texture	tex;
+	void	*img;
+	char	*img_data;//img dizisi
+	int		bpp;//bit per pixel
+	int		size_line;//bir satırın tuttuğu byte
+	int		endian;
 }	t_game;
 
+typedef struct s_ray
+{
+	double	dir_x;
+	double	dir_y;
+}	t_ray;
 
+
+//utils.c
 int		handle_exit(void *parameter);
 void	exit_game(t_game *game);
 void	free_map(char **map);
+void	put_pixel(t_game *game, int x, int y, int color);
 
-
+//movement.c
 int		key_hook(int keycode, t_game *game);
+void	update_dir(t_game *game);
+
 
 //parse.c
 int parse_file(char *filename, t_game *game);
@@ -70,6 +85,7 @@ int	map_height(char	*filename);
 int	validate_map(t_game *game);
 int	validate_walls(t_game *game);
 
-
+//render.c
+void	render(t_game *game);
 
 #endif

@@ -19,7 +19,11 @@ void init_game(t_game *game)
 	game->tex.ea = NULL;
 	game->tex.floor_flag = 0;
 	game->tex.ceiling_flag = 0;
-
+	game->img = NULL;
+	game->img_data = NULL;
+	game->bpp = 0;
+	game->size_line = 0;
+	game->endian = 0;
 }
 
 int main(int argc, char **argv)
@@ -40,6 +44,13 @@ int main(int argc, char **argv)
 	game.win = mlx_new_window(game.mlx, WIDTH, HEIGHT, "cub3d");
 	if (!game.win)
 		return (1);
+	game.img = mlx_new_image(game.mlx, WIDTH, HEIGHT);//ramde boş piksel dizisi oluşturur
+	if (!game.img)
+		return (1);
+	game.img_data = mlx_get_data_addr(game.img, &game.bpp, &game.size_line, &game.endian);//dizinin bilgilerini verir
+
+	update_dir(&game);
+	render(&game);
 	mlx_hook(game.win, 17, 0, handle_exit, &game);
 	mlx_key_hook(game.win, key_hook, &game);
 	mlx_loop(game.mlx);

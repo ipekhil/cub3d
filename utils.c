@@ -33,3 +33,14 @@ void	exit_game(t_game *game)
 	}
 	exit(0);
 }
+
+void    put_pixel(t_game *game, int x, int y, int color)
+{
+	char	*dst;//dst dizideki adres
+
+	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
+		return ;
+	dst = game->img_data + (y * game->size_line) \
+		+ (x * game->bpp / 8);//nereye yazacağımızı hesaplıyor
+	*(unsigned int *)dst = color;//adrese yazacağımız değer
+}

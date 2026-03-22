@@ -10,6 +10,7 @@ MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lbsd
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRC = cub3d.c utils.c movement.c map.c parser.c texture.c validation.c \
+	render.c \
 	$(GNL_DIR)/get_next_line.c $(GNL_DIR)/get_next_line_utils.c \
 	  printf/ft_printf.c printf/ft_printf_func.c
 
