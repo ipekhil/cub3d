@@ -23,7 +23,10 @@ int	handle_exit(void *parameter)
 
 void	exit_game(t_game *game)
 {
-	free_map(game -> map);
+	if (game->map)
+		free_map(game -> map);
+	if (game->img)
+		mlx_destroy_image(game->mlx, game->img);
 	if (game->win)
 		mlx_destroy_window(game -> mlx, game -> win);
 	if (game->mlx)
@@ -31,6 +34,14 @@ void	exit_game(t_game *game)
 		mlx_destroy_display(game -> mlx);
 		free(game -> mlx);		
 	}
+	if (game->tex.no)
+		free(game->tex.no);
+	if (game->tex.so)
+		free(game->tex.so);
+	if (game->tex.we)
+		free(game->tex.we);
+	if (game->tex.ea)
+		free(game->tex.ea);
 	exit(0);
 }
 

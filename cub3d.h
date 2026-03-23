@@ -55,6 +55,12 @@ typedef struct s_ray
 {
 	double	dir_x;
 	double	dir_y;
+	double	delta_x;
+	double	delta_y;
+	int		step_x;
+	int		step_y;
+	double	side_x;
+	double	side_y;
 }	t_ray;
 
 

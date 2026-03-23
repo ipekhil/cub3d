@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 	}
 	init_game(&game);
 	if (parse_file(argv[1], &game) == -1)
-		return (1);
+		exit_game(&game);
 	game.mlx = mlx_init();
 	if (!game.mlx)
 		return (1);
