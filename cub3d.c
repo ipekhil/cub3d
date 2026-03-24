@@ -38,6 +38,7 @@ int main(int argc, char **argv)
 	init_game(&game);
 	if (parse_file(argv[1], &game) == -1)
 		exit_game(&game);
+	printf("width: %d, height: %d\n", game.width, game.height);
 	game.mlx = mlx_init();
 	if (!game.mlx)
 		return (1);

@@ -12,11 +12,19 @@
 
 static void	move_player(t_game *game, double dir_x, double dir_y)
 {
-	double speed = 0.15;
+	double speed;
+	double new_x;
+	double new_y;
 
-    game->player_x += dir_x * speed;
-    game->player_y += dir_y * speed;
+	speed = 0.15;
+	new_x = game->player_x + dir_x * speed;
+	new_y = game->player_y + dir_y * speed;
 
+	//sadece duvar olmayan yerlere gidebilir
+	if (game->map[(int)game->player_y][(int)new_x] != '1')
+		game->player_x = new_x;
+	if (game->map[(int)new_y][(int)game->player_x] != '1')
+		game->player_y = new_y;
     printf("X: %.2f | Y: %.2f | Açı: %.2f\n", 
            game->player_x, game->player_y, game->angle);
 	// if (game -> map[new_y][new_x] != '1')

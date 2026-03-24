@@ -61,6 +61,10 @@ typedef struct s_ray
 	int		step_y;
 	double	side_x;
 	double	side_y;
+	int		map_x;
+	int		map_y;
+	int		side;
+	double	perpendicular_dist;
 }	t_ray;
 
 

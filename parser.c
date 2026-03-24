@@ -90,17 +90,25 @@ int parse_file(char *filename, t_game *game)
 
 	game->height = map_height(filename);
 	if (!game->height)
-	return (-1);
+		return (-1);
 	game->map = read_map(filename, game->height);
 	if (!game->map)
-	return (-1);
-	
+		return (-1);
+
+	//seg faulttan sonra ekledim
+	int i = 0;
+	while (game->map[i])
+	{
+		if ((int)ft_strlen(game->map[i]) > game->width)
+			game->width = ft_strlen(game->map[i]);
+		i++;
+	}
 	if (!validate_map(game))
 		return (-1);
 	if (!validate_walls(game))
 		return (-1);
 	
-	int i = 0;
+	i = 0;
 	while (game->map[i])
 	{
 		printf("MAP[%d]: %s\n", i, game->map[i]);
