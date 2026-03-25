@@ -48,6 +48,8 @@ char	**read_map(char	*filename, int height)
 		free(line);
 		line = get_next_line(fd, 0);
 	}
+	if (line)
+		free(line);
 	map[i] = NULL;
 	get_next_line(fd, 1);
 	close(fd);
