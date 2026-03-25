@@ -11,8 +11,8 @@ void init_game(t_game *game)
 	game -> player_x = 5.0;
 	game -> player_y = 5.0;
 	game -> moves = 0;
-	game->dirX = -1;
-	game->dirY = 0;
+	game->dir_x = -1;
+	game->dir_y = 0;
 	ft_memset(&game->tex, 0, sizeof(t_texture));
 	game->img = NULL;
 	game->img_data = NULL;
@@ -23,7 +23,8 @@ void init_game(t_game *game)
 
 int main(int argc, char **argv)
 {
-	t_game game;
+	t_game	game;
+
 	(void)argv;
 	if (argc != 2)
 	{
@@ -42,11 +43,13 @@ int main(int argc, char **argv)
 	game.win = mlx_new_window(game.mlx, WIDTH, HEIGHT, "cub3d");
 	if (!game.win)
 		return (1);
-	game.img = mlx_new_image(game.mlx, WIDTH, HEIGHT);//ramde boş piksel dizisi oluşturur
+	game.img = mlx_new_image(game.mlx, WIDTH, HEIGHT);
+	//ramde boş piksel dizisi oluşturur
 	if (!game.img)
 		return (1);
-	game.img_data = mlx_get_data_addr(game.img, &game.bpp, &game.size_line, &game.endian);//dizinin bilgilerini verir
-
+	game.img_data = mlx_get_data_addr(game.img, &game.bpp,
+			&game.size_line, &game.endian);
+	//dizinin bilgilerini verir
 	update_dir(&game);
 	render(&game);
 	mlx_hook(game.win, 17, 0, handle_exit, &game);

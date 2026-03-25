@@ -18,6 +18,7 @@ static char	*texture_path(char *line, int offset)
 	path[i] = '\0';
 	return (path);
 }
+
 //virgüle göre ayrıştırıp her sayıyı dizinin bir indeksine atıyor
 static int	parse_rgb(char *line, int rgb[3])
 {
@@ -70,18 +71,20 @@ int	parse_texture_line(char *line, t_game *game)
 }
 
 //xpm dosyasını yükleyip img ve data pointerlarını dolduruyor
-static int one_load_texture(t_game *game, t_tex_img *tex_img, char *path)
+static int	one_load_texture(t_game *game, t_tex_img *tex_img, char *path)
 {
-	tex_img->img = mlx_xpm_file_to_image(game->mlx, path, &tex_img->width, &tex_img->height);
+	tex_img->img = mlx_xpm_file_to_image(game->mlx, path, &tex_img->width,
+			&tex_img->height);
 	if (!tex_img->img)
 		return (-1);
 	//img in data adresini alıp int* a çeviriyor
-	tex_img->data = (int *)mlx_get_data_addr(tex_img->img, &tex_img->bpp, &tex_img->size_line, &tex_img->endian);
+	tex_img->data = (int *)mlx_get_data_addr(tex_img->img, &tex_img->bpp,
+			&tex_img->size_line, &tex_img->endian);
 	return (0);
 }
 
 //tüm textureları sırayla yüklüyor
-int load_textures(t_game *game)
+int	load_textures(t_game *game)
 {
 	if (one_load_texture(game, &game->tex.no, game->tex.no_path) < 0)
 		return (-1);
@@ -102,7 +105,7 @@ int load_textures(t_game *game)
 	return (0);
 }
 
-t_tex_img *get_texture(t_game *game, t_ray *ray)
+t_tex_img	*get_texture(t_game *game, t_ray *ray)
 {
 	if (ray->side == 0)
 	{
