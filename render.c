@@ -107,25 +107,55 @@ static void	dda_alg(t_game *game, t_ray *ray)
 }
 
 //perp diste göre duvar yüksekliğini hesapla ve çiz
-static void	draw_column(t_game *game, t_ray *ray, int x)
+static void	draw_column(t_game *game, t_ray *ray, int x, t_tex_img *tex)
 {
-	int	wall_height;
-	int	w_top;
-	int	w_bottom;
-	int	color;
+	int		wall_height;
+	int		w_top;
+	int		w_bottom;
+	double	hit_point;
+	int 	tex_x;
+	int		tex_y;
+	double	step;
+	double	tex_pos;
+	int		color;
 
-	wall_height = HEIGHT / ray->perpendicular_dist;//mesafesine göre duvarın uzunluğu
+	wall_height = HEIGHT / ray->perpendicular_dist;//mesafesine göre duvarın uzunluğu perpendicular_dist ne kadar büyükse duvar o kadar kısa olur	
 	w_top = HEIGHT / 2 - wall_height / 2;//çizeceğimiz duvarın üst noktası
 	w_bottom = HEIGHT / 2 + wall_height / 2;//çizeceğimiz duvarın alt noktası
 
+	//duvar ekranın dışına taşmasın diye sınırlandırıyoruz
 	if (w_top < 0)
 		w_top = 0;
 	if (w_bottom >= HEIGHT)
 		w_bottom = HEIGHT;
+	
+	//duvara çarptığımız noktanın koordinatını buluyoruz
+	if (ray->side == 0)
+		hit_point = game->player_y + ray->perpendicular_dist * ray->dir_y;
+	else
+		hit_point = game->player_x + ray->perpendicular_dist * ray->dir_x;
+	//floor ile tam sayı kısmını atıp 0.0 - 1.0 arası değer elde ediyoruz onu da texture genişliği ile çarpıyoruz
+	//ve hangi sütunu çizeceğimizi buluyoruz
+	tex_x = (int)((hit_point - floor(hit_point)) * tex->width);
+
+	//her ekran pikseli için texture'da kaç satır atlayacağız. 
+	//duvar ne kadar büüykse (wall_height) , step o kadar küçük olur çünkü duvarın her pikseli texture'da daha az satır atlar.
+	step = (double)tex->height / wall_height;
+	//texture'ın hangi satırından başlayacağımızı buluyoruz
+	tex_pos = (w_top - HEIGHT / 2 + wall_height / 2) * step;
+
+	//duvarın üstünden başlayarak duvarın altına kadar her piksel için texture'dan renk alıp çizeriz
 	color = w_top;
 	while (color <= w_bottom)
 	{
-		put_pixel(game, x, color, 0xAAAAAA);
+		//tex_pos'u int'e çevirip texture'ın o satırından renk alıyoruz
+		tex_y = (int)tex_pos % tex->height;
+		//tex_pos'u step kadar artırarak bir sonraki piksel için texture'ın hangi satırını kullanacağımızı buluyoruz
+		tex_pos = tex_pos + step;
+		//texture'dan aldığımız rengi ekrana çiziyoruz
+		//tex->size_line / 4: bir satırda kaç int var onu buluyoruz çünkü data int* türünde
+		//onu tex_y ile çarparak texture'ın o satırının başlangıç adresini buluyoruz, tex_x ile de o satırda hangi sütunu kullanacağımızı buluyoruz
+		put_pixel(game, x, color, tex->data[tex_y * (tex->size_line / 4) + tex_x]);
 		color++;
 	}
 }
@@ -134,6 +164,7 @@ void	render(t_game *game)
 {
 	int		x;
 	t_ray	ray;
+	t_tex_img	*tex;
 
 	x = -1;
 	drawn_background(game);
@@ -141,7 +172,8 @@ void	render(t_game *game)
 	{
 		init_ray(game, &ray, x);
 		dda_alg(game, &ray);
-		draw_column(game, &ray, x);
+		tex = get_texture(game, &ray);
+		draw_column(game, &ray, x, tex);
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 }

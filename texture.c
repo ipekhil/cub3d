@@ -44,14 +44,14 @@ static int	parse_rgb(char *line, int rgb[3])
 
 int	parse_texture_line(char *line, t_game *game)
 {
-	if (ft_strncmp(line, "NO ", 3) == 0 && !game->tex.no)
-		game->tex.no = texture_path(line, 3);
-	else if (ft_strncmp(line, "SO ", 3) == 0 && !game->tex.so)
-		game->tex.so = texture_path(line, 3);
-	else if (ft_strncmp(line, "WE ", 3) == 0 && !game->tex.we)
-		game->tex.we = texture_path(line, 3);
-	else if (ft_strncmp(line, "EA ", 3) == 0 && !game->tex.ea)
-		game->tex.ea = texture_path(line, 3);
+	if (ft_strncmp(line, "NO ", 3) == 0 && !game->tex.no_path)
+		game->tex.no_path = texture_path(line, 3);
+	else if (ft_strncmp(line, "SO ", 3) == 0 && !game->tex.so_path)
+		game->tex.so_path = texture_path(line, 3);
+	else if (ft_strncmp(line, "WE ", 3) == 0 && !game->tex.we_path)
+		game->tex.we_path = texture_path(line, 3);
+	else if (ft_strncmp(line, "EA ", 3) == 0 && !game->tex.ea_path)
+		game->tex.ea_path = texture_path(line, 3);
 	else if (ft_strncmp(line, "F ", 2) == 0 && !game->tex.floor_flag)
 	{
 		if (parse_rgb(&line[2], game->tex.floor) < 0)
@@ -69,3 +69,53 @@ int	parse_texture_line(char *line, t_game *game)
 	return (0);
 }
 
+//xpm dosyasını yükleyip img ve data pointerlarını dolduruyor
+static int one_load_texture(t_game *game, t_tex_img *tex_img, char *path)
+{
+	tex_img->img = mlx_xpm_file_to_image(game->mlx, path, &tex_img->width, &tex_img->height);
+	if (!tex_img->img)
+		return (-1);
+	//img in data adresini alıp int* a çeviriyor
+	tex_img->data = (int *)mlx_get_data_addr(tex_img->img, &tex_img->bpp, &tex_img->size_line, &tex_img->endian);
+	return (0);
+}
+
+//tüm textureları sırayla yüklüyor
+int load_textures(t_game *game)
+{
+	if (one_load_texture(game, &game->tex.no, game->tex.no_path) < 0)
+		return (-1);
+	if (one_load_texture(game, &game->tex.so, game->tex.so_path) < 0)
+		return (-1);
+	if (one_load_texture(game, &game->tex.we, game->tex.we_path) < 0)
+		return (-1);
+	if (one_load_texture(game, &game->tex.ea, game->tex.ea_path) < 0)
+		return (-1);
+	free(game->tex.no_path);
+	game->tex.no_path = NULL;
+	free(game->tex.so_path);
+	game->tex.so_path = NULL;
+	free(game->tex.we_path);
+	game->tex.we_path = NULL;
+	free(game->tex.ea_path);
+	game->tex.ea_path = NULL;
+	return (0);
+}
+
+t_tex_img *get_texture(t_game *game, t_ray *ray)
+{
+	if (ray->side == 0)
+	{
+		if (ray->step_x == 1)
+			return (&game->tex.ea);
+		else
+			return (&game->tex.we);
+	}
+	else
+	{
+		if (ray->step_y == 1)
+			return (&game->tex.so);
+		else
+			return (&game->tex.no);
+	}
+}

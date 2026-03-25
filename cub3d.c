@@ -13,12 +13,7 @@ void init_game(t_game *game)
 	game -> moves = 0;
 	game->dirX = -1;
 	game->dirY = 0;
-	game->tex.no = NULL;
-	game->tex.so = NULL;
-	game->tex.we = NULL;
-	game->tex.ea = NULL;
-	game->tex.floor_flag = 0;
-	game->tex.ceiling_flag = 0;
+	ft_memset(&game->tex, 0, sizeof(t_texture));
 	game->img = NULL;
 	game->img_data = NULL;
 	game->bpp = 0;
@@ -42,6 +37,8 @@ int main(int argc, char **argv)
 	game.mlx = mlx_init();
 	if (!game.mlx)
 		return (1);
+	if (load_textures(&game) == -1)
+		exit_game(&game);
 	game.win = mlx_new_window(game.mlx, WIDTH, HEIGHT, "cub3d");
 	if (!game.win)
 		return (1);

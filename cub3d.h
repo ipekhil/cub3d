@@ -15,16 +15,31 @@
 #define WIDTH 400
 #define HEIGHT 300
 
+typedef struct s_tex_img
+{
+	void	*img;
+	int		*data;
+	int		width;
+	int		height;
+	int		bpp;
+	int		size_line;
+	int		endian;
+}	t_tex_img;
+
 typedef struct s_texture
 {
-	char	*no;
-	char	*so;
-	char	*we;
-	char	*ea;
-	int		floor[3];
-	int		ceiling[3];
-	int		floor_flag;//renk kodu olarak 0 mı yoksa null olarak onun ayrımı için
-	int		ceiling_flag;
+	t_tex_img	no;
+	t_tex_img	so;
+	t_tex_img	we;
+	t_tex_img	ea;
+	char		*no_path;
+	char		*so_path;
+	char		*we_path;
+	char		*ea_path;
+	int			floor[3];
+	int			ceiling[3];
+	int			floor_flag;//renk kodu olarak 0 mı yoksa null olarak onun ayrımı için
+	int			ceiling_flag;
 }	t_texture;
 
 
@@ -87,6 +102,8 @@ int	empty_line(char *line);
 
 //texture.c
 int	parse_texture_line(char *line, t_game *game);
+int load_textures(t_game *game);
+t_tex_img *get_texture(t_game *game, t_ray *ray);
 
 
 //map.c

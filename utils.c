@@ -25,6 +25,22 @@ void	exit_game(t_game *game)
 {
 	if (game->map)
 		free_map(game -> map);
+	if (game->tex.no_path)
+		free(game->tex.no_path);
+	if (game->tex.so_path)
+		free(game->tex.so_path);
+	if (game->tex.we_path)
+		free(game->tex.we_path);
+	if (game->tex.ea_path)
+		free(game->tex.ea_path);
+	if (game->tex.no.img)
+		mlx_destroy_image(game->mlx, game->tex.no.img);
+	if (game->tex.so.img)
+		mlx_destroy_image(game->mlx, game->tex.so.img);
+	if (game->tex.we.img)
+		mlx_destroy_image(game->mlx, game->tex.we.img);
+	if (game->tex.ea.img)
+		mlx_destroy_image(game->mlx, game->tex.ea.img);
 	if (game->img)
 		mlx_destroy_image(game->mlx, game->img);
 	if (game->win)
@@ -34,14 +50,6 @@ void	exit_game(t_game *game)
 		mlx_destroy_display(game -> mlx);
 		free(game -> mlx);		
 	}
-	if (game->tex.no)
-		free(game->tex.no);
-	if (game->tex.so)
-		free(game->tex.so);
-	if (game->tex.we)
-		free(game->tex.we);
-	if (game->tex.ea)
-		free(game->tex.ea);
 	exit(0);
 }
 
