@@ -53,7 +53,9 @@ int main(int argc, char **argv)
 	update_dir(&game);
 	render(&game);
 	mlx_hook(game.win, 17, 0, handle_exit, &game);
-	mlx_key_hook(game.win, key_hook, &game);
+	mlx_hook(game.win, 2, 1L << 0, key_press, &game);
+	mlx_hook(game.win, 3, 1L << 1, key_release, &game);
+	mlx_loop_hook(game.mlx, game_loop, &game);
 	mlx_loop(game.mlx);
 	return (1);
 }

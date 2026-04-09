@@ -64,6 +64,12 @@ typedef struct s_game
 	int			bpp;//bit per pixel
 	int			size_line;//bir satırın tuttuğu byte
 	int			endian;
+	int			key_w;
+	int			key_a;
+	int			key_s;
+	int			key_d;
+	int			key_left;
+	int			key_right;
 }	t_game;
 
 typedef struct s_ray
@@ -89,7 +95,9 @@ void		free_map(char **map);
 void		put_pixel(t_game *game, int x, int y, int color);
 
 //movement.c
-int			key_hook(int keycode, t_game *game);
+int			key_press(int keycode, t_game *game);
+int			key_release(int keycode, t_game *game);
+int			game_loop(t_game *game);
 void		update_dir(t_game *game);
 
 //parse.c
