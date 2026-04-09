@@ -1,71 +1,68 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   movement.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sude <sude@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/09 18:46:11 by staylan           #+#    #+#             */
+/*   Updated: 2026/04/09 21:40:21 by sude             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
-// static void	update_player_position(t_game *game, int new_x, int new_y)
-// {
-// 	//game->map[(int)game->player_y][(int)game->player_x] = '0';
-// 	//game->map[new_y][new_x] = 'P';
-// 	game->player_x = new_x;
-// 	game->player_y = new_y;
-// 	game->moves++;
-// 	printf("Moves: %d\n", game -> moves);
-// }
+static int	wall_at(t_game *game, double x, double y)
+{
+	return (game->map[(int)y][(int)x] == '1');
+}
 
 static void	move_player(t_game *game, double dir_x, double dir_y)
 {
 	double	speed;
 	double	new_x;
 	double	new_y;
+	double	buf;
 
-	speed = 0.15;
+	speed = 0.05;
+	buf = 0.1;
 	new_x = game->player_x + dir_x * speed;
 	new_y = game->player_y + dir_y * speed;
-	//sadece duvar olmayan yerlere gidebilir
-	if (game->map[(int)game->player_y][(int)new_x] != '1')
+	if (!wall_at(game, new_x + buf, game->player_y)
+		&& !wall_at(game, new_x - buf, game->player_y))
 		game->player_x = new_x;
-	if (game->map[(int)new_y][(int)game->player_x] != '1')
+	if (!wall_at(game, game->player_x, new_y + buf)
+		&& !wall_at(game, game->player_x, new_y - buf))
 		game->player_y = new_y;
-	printf("X: %.2f | Y: %.2f | Açı: %.2f\n",
-		game->player_x, game->player_y, game->angle);
-	// if (game -> map[new_y][new_x] != '1')
-	// {
-	// 	//if (!handler(game, new_x, new_y))
-	// 		return ;
-	// }
-	// else
-	// 	return ;
-	//update_player_position(game, new_x, new_y);
-	//render(game);
 }
 
-int	key_hook(int keycode, t_game	*game)
+static void	apply_keys(t_game *game)
 {
 	double	rot_speed;
 
-	rot_speed = 0.1;
-	if (keycode == 65307)
-		exit_game(game);
-	else if (keycode == 65363) //sağ
-		game->angle += rot_speed;
-	else if (keycode == 65361) //sol
-		game->angle -= rot_speed;
-	else if (keycode == 119) //W
+	rot_speed = 0.03;
+	if (game->key_w)
 		move_player(game, cos(game->angle), sin(game->angle));
-	else if (keycode == 115) //S
+	if (game->key_s)
 		move_player(game, -cos(game->angle), -sin(game->angle));
-	else if (keycode == 97) //A
+	if (game->key_a)
 		move_player(game, sin(game->angle), -cos(game->angle));
-	else if (keycode == 100) //D
+	if (game->key_d)
 		move_player(game, -sin(game->angle), cos(game->angle));
+	if (game->key_left)
+		game->angle -= rot_speed;
+	if (game->key_right)
+		game->angle += rot_speed;
+}
+
+int	game_loop(t_game *game)
+{
+	apply_keys(game);
 	update_dir(game);
 	render(game);
 	return (0);
 }
 
-/*
-dir ve plane her zaman birbirlerine dik olmalı. trigonometrik olarak cos un tersi -sin
-sinin tersi cos buna göre birbirlerinin tersini alıyoruz. 90 derece döndürmek gibi de düşünebiliriz
-0,66 ile çarpmamızın sebebi açının yani ekranın genişliği gibi düşünebiliriz.
-*/
 void	update_dir(t_game *game)
 {
 	game->dir_x = cos(game->angle);

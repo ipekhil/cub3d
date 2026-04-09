@@ -19,25 +19,61 @@ static char	*texture_path(char *line, int offset)
 	return (path);
 }
 
-//virgüle göre ayrıştırıp her sayıyı dizinin bir indeksine atıyor
+static int	valid_rgb_str(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i] == ' ')
+		i++;
+	if (!s[i])
+		return (0);
+	while (s[i] >= '0' && s[i] <= '9')
+		i++;
+	while (s[i] == ' ' || s[i] == '\n')
+		i++;
+	return (s[i] == '\0');
+}
+
+static long	ft_atol(const char *s)
+{
+	long	res;
+
+	res = 0;
+	while (*s == ' ')
+		s++;
+	while (*s >= '0' && *s <= '9')
+	{
+		res = res * 10 + (*s - '0');
+		if (res > 255)
+			return (256);
+		s++;
+	}
+	return (res);
+}
+
 static int	parse_rgb(char *line, int rgb[3])
 {
 	char	**split;
 	int		i;
+	long	val;
 
 	split = ft_split(line, ',');
 	if (!split || !split[0] || !split[1] || !split[2])
-		return (-1);
-	i = 0;
-	while (i < 3)
+			return (free_map(split), -1);
+	if (split[3])
+		return (free_map(split), -1);
+	i = -1;
+	while (++i < 3)
 	{
-		rgb[i] = ft_atoi(split[i]);
-		if (rgb[i] < 0 || rgb[i] > 255)
-		{
-			free_map(split);
-			return (-1);
+		if (!valid_rgb_str(split[i]))
+			return (free_map(split), -1);
+		val = ft_atol(split[i]);
+		if (val < 0 || val > 255){
+			ft_printf("Error\nInteger overflow!\n");
+			return (free_map(split), -1);
 		}
-		i++;
+		rgb[i] = (int)val;
 	}
 	free_map(split);
 	return (0);
