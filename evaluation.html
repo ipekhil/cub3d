@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cub3D - Evaluation Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --surface2: #1a1a26;
+  --border: #2a2a3a;
+  --text: #e8e6e3;
+  --text-dim: #8a8a9a;
+  --accent: #ff6b35;
+  --accent2: #ffd166;
+  --accent3: #06d6a0;
+  --accent4: #118ab2;
+  --code-bg: #0d0d14;
+  --ray: #ff6b3555;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, var(--border) 39px, var(--border) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, var(--border) 39px, var(--border) 40px);
+  opacity: 0.15;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  opacity: 0.06;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--text), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero h1 em {
+  font-style: italic;
+  -webkit-text-fill-color: var(--accent);
+}
+
+.hero-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.hero-badges {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-dim);
+  background: var(--surface);
+}
+
+.badge .val { color: var(--accent); font-weight: 700; }
+
+/* ── NAV ── */
+.toc {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.toc-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  overflow-x: auto;
+  gap: 0;
+  scrollbar-width: none;
+}
+
+.toc-inner::-webkit-scrollbar { display: none; }
+
+.toc a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  padding: 1rem 1.2rem;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.toc a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── SECTIONS ── */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+section {
+  padding: 5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: 2rem;
+}
+
+p { margin-bottom: 1.2rem; color: var(--text); font-size: 0.95rem; }
+p.dim { color: var(--text-dim); }
+
+/* ── CODE ── */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  margin: 1.5rem 0;
+  color: var(--text-dim);
+}
+
+pre .kw { color: var(--accent); }
+pre .fn { color: var(--accent2); }
+pre .cm { color: #555568; font-style: italic; }
+pre .str { color: var(--accent3); }
+pre .num { color: var(--accent4); }
+pre .op { color: var(--accent); }
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  background: var(--surface2);
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  color: var(--accent2);
+}
+
+/* ── DIAGRAM BOXES ── */
+.flow-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 2rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.flow-step {
+  display: flex;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+
+.flow-line {
+  width: 2px;
+  background: var(--border);
+  position: relative;
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+
+.flow-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+}
+
+.flow-step:last-child .flow-line { background: linear-gradient(var(--border), transparent); }
+
+.flow-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.flow-card h4 {
+  color: var(--accent2);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.flow-card .file {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+
+.flow-card p { font-size: 0.82rem; margin-bottom: 0; color: var(--text-dim); }
+
+/* ── INFO GRID ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.info-card:hover { border-color: var(--accent); }
+
+.info-card h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent2);
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-card p { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0; }
+
+.info-card .tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--accent3);
+  margin-top: 0.5rem;
+}
+
+/* ── STRUCT DIAGRAM ── */
+.struct-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+
+.struct-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.8rem 1.5rem;
+  background: var(--surface2);
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+
+.struct-fields {
+  padding: 0;
+  list-style: none;
+}
+
+.struct-fields li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+
+.struct-fields li:last-child { border-bottom: none; }
+
+.field-name {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent2);
+  font-size: 0.78rem;
+}
+
+.field-desc { color: var(--text-dim); text-align: right; font-size: 0.78rem; }
+
+/* ── MATH ── */
+.formula {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.formula .label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+
+.formula .expr {
+  color: var(--accent2);
+  font-size: 0.95rem;
+}
+
+/* ── CANVAS ── */
+.canvas-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.canvas-wrap canvas {
+  display: block;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.canvas-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.82rem;
+}
+
+.data-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-align: left;
+  padding: 0.8rem 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.data-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.data-table td:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent2);
+  font-size: 0.78rem;
+}
+
+/* ── KEY MAP ── */
+.keymap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
+  margin: 2rem 0;
+}
+
+.key-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.key-cap {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: var(--surface2);
+  color: var(--accent);
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  min-width: 2rem;
+  text-align: center;
+}
+
+.key-desc { font-size: 0.8rem; color: var(--text-dim); }
+
+/* ── SCROLL ANIM ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Q&A ── */
+.qa-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.qa-q {
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.qa-q:hover { background: var(--surface2); }
+
+.qa-q::after {
+  content: '+';
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+  color: var(--accent);
+  transition: transform 0.3s;
+}
+
+.qa-item.open .qa-q::after { transform: rotate(45deg); }
+
+.qa-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.qa-a-inner {
+  padding: 0 1.5rem 1.5rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 1rem; }
+  section { padding: 3rem 0; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<div class="hero">
+  <div class="hero-content">
+    <h1>cub<em>3D</em></h1>
+    <p class="hero-sub">Raycasting Engine &mdash; 42 School Project</p>
+    <div class="hero-badges">
+      <span class="badge">DDA Algorithm</span>
+      <span class="badge">Textured Walls</span>
+      <span class="badge">Resolution <span class="val">800x600</span></span>
+      <span class="badge">C / MinilibX</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ NAV ════════════════════ -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#overview">Genel Bakis</a>
+    <a href="#structs">Struct'lar</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#dda">DDA Algoritmasi</a>
+    <a href="#textures">Texture Mapping</a>
+    <a href="#movement">Hareket</a>
+    <a href="#parsing">Parsing</a>
+    <a href="#constants">Sabitler</a>
+    <a href="#qa">Soru-Cevap</a>
+  </div>
+</nav>
+
+<!-- ════════════════════ 01 OVERVIEW ════════════════════ -->
+<section id="overview">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">01 &mdash; Genel Bakis</span>
+    <h2 class="section-title">Wolfenstein 3D mantigi ile<br>2D haritadan 3D gorunum</h2>
+    <p>cub3D, 2 boyutlu bir grid haritayi alip, her ekran sutunu icin bir isin (ray) firlatarak duvarlarin ne kadar uzakta oldugunu bulan ve buna gore dikey seritler cizen bir raycasting motorudur. Gercek 3D render yapmaz &mdash; her sutun icin tek bir isin yeterlidir.</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>Raycasting Nedir?</h4>
+        <p>Ekranin her piksel sutunu icin bir isin firlatilir. Isin grid hucreleri boyunca ilerleyerek duvara carpar. Carpma mesafesine gore duvar yuksekligi hesaplanir.</p>
+        <span class="tag">800 isin / frame</span>
+      </div>
+      <div class="info-card">
+        <h4>Neden 3D Degil?</h4>
+        <p>Gercek 3D'de her piksel icin islem yapilir. Raycasting'de sadece X ekseni boyunca (800 sutun) islem yapilir. Y ekseni matematikle turetilir. Bu yuzden cok hizlidir.</p>
+        <span class="tag">O(WIDTH x grid)</span>
+      </div>
+      <div class="info-card">
+        <h4>Dosya Yapisi</h4>
+        <p><code>cub3d.c</code> init, <code>render.c</code> cizim, <code>movement.c</code> hareket, <code>parser.c</code> dosya okuma, <code>texture.c</code> texture, <code>map.c</code> harita, <code>utils.c</code> yardimci.</p>
+        <span class="tag">7 kaynak dosya</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 02 STRUCTS ════════════════════ -->
+<section id="structs">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">02 &mdash; Veri Yapilari</span>
+    <h2 class="section-title">Her sey <code>t_game</code> icinde yasiyor</h2>
+    <p>Tum oyun durumu tek bir struct'ta tutulur ve tum fonksiyonlara pointer olarak gonderilir.</p>
+
+    <div class="struct-block">
+      <div class="struct-header">t_game &mdash; Ana Oyun Durumu</div>
+      <ul class="struct-fields">
+        <li><span class="field-name">*mlx, *win</span><span class="field-desc">MLX pencere ve grafik pointer'lari</span></li>
+        <li><span class="field-name">**map</span><span class="field-desc">2D karakter dizisi &mdash; '1' duvar, '0' bos</span></li>
+        <li><span class="field-name">player_x, player_y</span><span class="field-desc">Oyuncu pozisyonu (double, sub-grid hassasiyet)</span></li>
+        <li><span class="field-name">angle</span><span class="field-desc">Bakis acisi (radyan). 0=Dogu, PI/2=Guney</span></li>
+        <li><span class="field-name">dir_x, dir_y</span><span class="field-desc">Kamera yon vektoru: (cos(angle), sin(angle))</span></li>
+        <li><span class="field-name">plane_x, plane_y</span><span class="field-desc">Kamera duzlemi: yon vektorune dik, FOV belirler</span></li>
+        <li><span class="field-name">key_w/a/s/d/left/right</span><span class="field-desc">Tus durum flag'leri (0 veya 1)</span></li>
+        <li><span class="field-name">tex</span><span class="field-desc">t_texture &mdash; 4 duvar texture'u + zemin/tavan rengi</span></li>
+        <li><span class="field-name">*img, *img_data</span><span class="field-desc">Frame buffer &mdash; pikseller buraya yazilir</span></li>
+      </ul>
+    </div>
+
+    <div class="struct-block">
+      <div class="struct-header">t_ray &mdash; Isin Durumu (her sutun icin)</div>
+      <ul class="struct-fields">
+        <li><span class="field-name">dir_x, dir_y</span><span class="field-desc">Bu isinin yonu</span></li>
+        <li><span class="field-name">delta_x, delta_y</span><span class="field-desc">Bir grid cizgisi gecisi basina mesafe</span></li>
+        <li><span class="field-name">step_x, step_y</span><span class="field-desc">Grid'de ilerleme yonu (+1 veya -1)</span></li>
+        <li><span class="field-name">side_x, side_y</span><span class="field-desc">Bir sonraki grid cizgisine mesafe</span></li>
+        <li><span class="field-name">map_x, map_y</span><span class="field-desc">Isinin su an bulundugu grid hucresi</span></li>
+        <li><span class="field-name">side</span><span class="field-desc">0 = dikey duvara carpti, 1 = yatay duvara carpti</span></li>
+        <li><span class="field-name">perpendicular_dist</span><span class="field-desc">Duvara dik mesafe (fish-eye duzeltmeli)</span></li>
+      </ul>
+    </div>
+
+    <div class="struct-block">
+      <div class="struct-header">t_tex_img &mdash; Texture Verisi</div>
+      <ul class="struct-fields">
+        <li><span class="field-name">*img</span><span class="field-desc">MLX image pointer</span></li>
+        <li><span class="field-name">*data</span><span class="field-desc">Piksel renk dizisi (int*, her int = 1 piksel ARGB)</span></li>
+        <li><span class="field-name">width, height</span><span class="field-desc">Texture boyutlari (genelde 64x64)</span></li>
+        <li><span class="field-name">size_line</span><span class="field-desc">Bir satirin byte cinsinden boyutu</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 03 PIPELINE ════════════════════ -->
+<section id="pipeline">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">03 &mdash; Render Pipeline</span>
+    <h2 class="section-title">Her frame'de neler oluyor?</h2>
+    <p><code>game_loop()</code> fonksiyonu <code>mlx_loop_hook</code> ile her frame'de cagirilir. Sirasyla:</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="flow-line"></div>
+        <div class="flow-card">
+          <h4>1. apply_keys()</h4>
+          <div class="file">movement.c</div>
+          <p>Basili tuslari kontrol eder, oyuncuyu hareket ettirir ve aciyi gunceller.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"></div>
+        <div class="flow-card">
+          <h4>2. update_dir()</h4>
+          <div class="file">movement.c</div>
+          <p>angle'dan dir ve plane vektorlerini yeniden hesaplar. <code>dir = (cos, sin)</code>, <code>plane = (-sin, cos) * 0.66</code></p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"></div>
+        <div class="flow-card">
+          <h4>3. drawn_background()</h4>
+          <div class="file">render.c</div>
+          <p>Ekranin ust yarisi tavan rengi, alt yarisi zemin rengi ile doldurulur.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"></div>
+        <div class="flow-card">
+          <h4>4. init_ray(x)</h4>
+          <div class="file">render.c &mdash; her sutun icin</div>
+          <p>Ekran sutunundan kamera koordinati hesaplanir: <code>camera = 2x/WIDTH - 1</code>. Isin yonu, delta, step ve ilk side degerleri belirlenir.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"></div>
+        <div class="flow-card">
+          <h4>5. dda_alg()</h4>
+          <div class="file">render.c</div>
+          <p>Isin grid hucreleri boyunca adim adim ilerler. Her adimda side_x ve side_y karsilastirilir &mdash; hangisi kucukse o yone adim atilir. '1' bulunca durur.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"></div>
+        <div class="flow-card">
+          <h4>6. get_texture()</h4>
+          <div class="file">texture.c</div>
+          <p>Isinin carptigi yuz belirlenir: side=0 ise dir_x'e gore EA/WE, side=1 ise dir_y'ye gore SO/NO texture secilir.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"></div>
+        <div class="flow-card">
+          <h4>7. draw_column()</h4>
+          <div class="file">render.c</div>
+          <p>Dik mesafeden duvar yuksekligi hesaplanir, texture koordinatlari belirlenir ve dikey serit piksel piksel ciziilir.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 04 DDA ════════════════════ -->
+<section id="dda">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">04 &mdash; DDA Algoritmasi</span>
+    <h2 class="section-title">Isinin duvari bulmasi</h2>
+    <p>DDA (Digital Differential Analyzer), isinin grid uzerinde adim adim ilerleyerek duvari bulmasi icin kullanilir. Her adimda bir sonraki yatay veya dikey grid cizgisinden hangisi daha yakinsa ona gecilir.</p>
+
+    <div class="canvas-wrap">
+      <canvas id="ddaCanvas" width="560" height="380"></canvas>
+      <p class="canvas-label">Interaktif DDA &mdash; Isinin grid uzerindeki adimlarini izleyin</p>
+    </div>
+
+    <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.4rem; margin: 2rem 0 1rem;">Adim Adim Aciklama</h3>
+
+    <div class="formula">
+      <div class="label">1. Delta Hesabi</div>
+      <div class="expr">delta_x = |1 / dir_x|&nbsp;&nbsp;&nbsp;&nbsp;delta_y = |1 / dir_y|</div>
+    </div>
+    <p class="dim">Delta, isinin bir grid cizgisinden digerine giderken kat ettigi mesafedir. dir_x buyukse delta_x kucuk olur (isin hizla dikey cizgileri keser).</p>
+
+    <div class="formula">
+      <div class="label">2. Ilk Side Mesafesi (ornek: saga giderken)</div>
+      <div class="expr">side_x = (map_x + 1 - player_x) * delta_x</div>
+    </div>
+    <p class="dim">Oyuncunun bulundugu hucrenin sagina olan mesafe. Bu ilk adimdir.</p>
+
+    <div class="formula">
+      <div class="label">3. DDA Dongusu</div>
+      <div class="expr">side_x &lt; side_y &rarr; X yonune adim at, side_x += delta_x</div>
+    </div>
+    <p class="dim">Her adimda kucuk olan yone gecilir. Bu sayede isin hicbir hucreyi atlamaz.</p>
+
+    <div class="formula">
+      <div class="label">4. Dik Mesafe (Fish-eye Duzeltme)</div>
+      <div class="expr">perp_dist = side_x - delta_x &nbsp;&nbsp;<span style="color:var(--text-dim)">(dikey duvara carptiginda)</span></div>
+    </div>
+    <p class="dim">Gercek isin mesafesi yerine kamera duzlemine dik mesafe kullanilir. Bu, ekran kenarlarindaki bozulmayi (fish-eye) onler.</p>
+
+    <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.4rem; margin: 2rem 0 1rem;">Kod Karsiligi</h3>
+    <pre><span class="cm">// render.c - dda_alg() fonksiyonu</span>
+<span class="kw">while</span> (!wall_flag)
+{
+    <span class="kw">if</span> (ray->side_y > ray->side_x)    <span class="cm">// Dikey cizgi daha yakin</span>
+    {
+        ray->side_x += ray->delta_x;  <span class="cm">// X yonune ilerle</span>
+        ray->map_x += ray->step_x;    <span class="cm">// Grid hucresini degistir</span>
+        ray->side = <span class="num">0</span>;               <span class="cm">// Dikey duvara carpti</span>
+    }
+    <span class="kw">else</span>                              <span class="cm">// Yatay cizgi daha yakin</span>
+    {
+        ray->side_y += ray->delta_y;  <span class="cm">// Y yonune ilerle</span>
+        ray->map_y += ray->step_y;
+        ray->side = <span class="num">1</span>;               <span class="cm">// Yatay duvara carpti</span>
+    }
+    <span class="kw">if</span> (map[ray->map_y][ray->map_x] == <span class="str">'1'</span>)
+        wall_flag = <span class="num">1</span>;               <span class="cm">// Duvar bulundu!</span>
+}</pre>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 05 TEXTURES ════════════════════ -->
+<section id="textures">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">05 &mdash; Texture Mapping</span>
+    <h2 class="section-title">Duvar yuzeyine texture giydirme</h2>
+
+    <p>Duvar bulunduktan sonra iki soru cevaplanir: texture'un hangi sutunu (tex_x) ve her piksel icin hangi satiri (tex_y)?</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>Texture Secimi</h4>
+        <p><code>get_texture()</code> isinin carptigi yuze gore 4 texture'dan birini secer:</p>
+        <p style="margin-top:0.5rem">
+          side=0 + dir_x&gt;0 &rarr; <strong>EA</strong> (dogu)<br>
+          side=0 + dir_x&lt;0 &rarr; <strong>WE</strong> (bati)<br>
+          side=1 + dir_y&gt;0 &rarr; <strong>SO</strong> (guney)<br>
+          side=1 + dir_y&lt;0 &rarr; <strong>NO</strong> (kuzey)
+        </p>
+      </div>
+      <div class="info-card">
+        <h4>Texture X Koordinati</h4>
+        <p>Isinin duvarin neresine carptiginin kesirli kismi alinir:</p>
+        <p style="margin-top:0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--accent2)">
+          hit = player_y + perp_dist * dir_y<br>
+          hit -= floor(hit) <span style="color:var(--text-dim)">// 0-1 arasi</span><br>
+          tex_x = hit * tex_width
+        </p>
+      </div>
+    </div>
+
+    <div class="formula">
+      <div class="label">Texture Y (Dikey Olcekleme)</div>
+      <div class="expr">step = tex_height / wall_height&nbsp;&nbsp;&nbsp;&nbsp;tex_y = (y - w_top) * step</div>
+    </div>
+    <p class="dim">Duvar yuksekligi ekrandan buyukse step &lt; 1 (texture sikisir), kucukse step &gt; 1 (texture gerilir). Her ekran pikselinde <code>tex_pos += step</code> ile texture'da ilerlenir.</p>
+
+    <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.4rem; margin: 2rem 0 1rem;">Piksel Adresleme</h3>
+    <pre><span class="cm">// Texture'dan piksel okuma</span>
+color = tex->data[tex_y * (tex->size_line / <span class="num">4</span>) + tex_x];
+
+<span class="cm">// Frame buffer'a piksel yazma (put_pixel)</span>
+dst = img_data + (y * size_line) + (x * bpp / <span class="num">8</span>);
+*(unsigned <span class="kw">int</span> *)dst = color;</pre>
+    <p class="dim"><code>size_line/4</code>: her satirdaki int sayisi (4 byte = 1 int = 1 piksel). <code>bpp/8</code>: bit'ten byte'a cevirir.</p>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 06 MOVEMENT ════════════════════ -->
+<section id="movement">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">06 &mdash; Hareket Sistemi</span>
+    <h2 class="section-title">Surekli hareket ve carpma kontrolu</h2>
+
+    <p>Tus durumu <code>mlx_hook</code> ile izlenir (event 2 = KeyPress, event 3 = KeyRelease). Her frame'de <code>apply_keys()</code> aktif tuslara gore hareket uygular.</p>
+
+    <div class="keymap">
+      <div class="key-item"><span class="key-cap">W</span><span class="key-desc">Ileri &mdash; (cos&theta;, sin&theta;)</span></div>
+      <div class="key-item"><span class="key-cap">S</span><span class="key-desc">Geri &mdash; (-cos&theta;, -sin&theta;)</span></div>
+      <div class="key-item"><span class="key-cap">A</span><span class="key-desc">Sol strafe &mdash; (sin&theta;, -cos&theta;)</span></div>
+      <div class="key-item"><span class="key-cap">D</span><span class="key-desc">Sag strafe &mdash; (-sin&theta;, cos&theta;)</span></div>
+      <div class="key-item"><span class="key-cap">&larr;</span><span class="key-desc">Sola don &mdash; angle -= 0.03</span></div>
+      <div class="key-item"><span class="key-cap">&rarr;</span><span class="key-desc">Saga don &mdash; angle += 0.03</span></div>
+      <div class="key-item"><span class="key-cap">ESC</span><span class="key-desc">Cikis</span></div>
+    </div>
+
+    <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.4rem; margin: 2rem 0 1rem;">Collision Buffer</h3>
+    <div class="formula">
+      <div class="label">Carpma Kontrolu (0.1 buffer)</div>
+      <div class="expr">wall_at(new_x + 0.1, y) || wall_at(new_x - 0.1, y) &rarr; X hareketi engellenir</div>
+    </div>
+    <p class="dim">X ve Y ayri kontrol edilir. Bu sayede duvara carparken diger eksende kayma (wall sliding) mumkun olur. Buffer sayesinde oyuncu duvara 0.1 birimden fazla yaklasalamaz.</p>
+
+    <pre><span class="kw">static void</span> <span class="fn">move_player</span>(t_game *game, <span class="kw">double</span> dir_x, <span class="kw">double</span> dir_y)
+{
+    new_x = player_x + dir_x * <span class="num">0.05</span>;
+    new_y = player_y + dir_y * <span class="num">0.05</span>;
+
+    <span class="kw">if</span> (!<span class="fn">wall_at</span>(game, new_x + <span class="num">0.1</span>, player_y)
+        && !<span class="fn">wall_at</span>(game, new_x - <span class="num">0.1</span>, player_y))
+        player_x = new_x;        <span class="cm">// X guvenli, guncelle</span>
+
+    <span class="kw">if</span> (!<span class="fn">wall_at</span>(game, player_x, new_y + <span class="num">0.1</span>)
+        && !<span class="fn">wall_at</span>(game, player_x, new_y - <span class="num">0.1</span>))
+        player_y = new_y;        <span class="cm">// Y guvenli, guncelle</span>
+}</pre>
+
+    <h3 style="font-family: 'Instrument Serif', serif; font-size: 1.4rem; margin: 2rem 0 1rem;">Neden mlx_key_hook degil?</h3>
+    <p class="dim"><code>mlx_key_hook</code> sadece tus birakildiginda (KeyRelease) tetiklenir. Surekli hareket icin <code>mlx_hook(event=2)</code> ile tus basildiginda flag acilir, <code>mlx_hook(event=3)</code> ile birakildiginda kapatilir, <code>mlx_loop_hook</code> her frame'de bu flag'leri kontrol eder.</p>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 07 PARSING ════════════════════ -->
+<section id="parsing">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">07 &mdash; Parsing &amp; Validation</span>
+    <h2 class="section-title">.cub dosyasi nasil okunur?</h2>
+
+    <pre><span class="str">NO ./textures/north.xpm</span>   <span class="cm">// Kuzey duvar texture yolu</span>
+<span class="str">SO ./textures/south.xpm</span>   <span class="cm">// Guney</span>
+<span class="str">WE ./textures/west.xpm</span>    <span class="cm">// Bati</span>
+<span class="str">EA ./textures/east.xpm</span>    <span class="cm">// Dogu</span>
+<span class="str">F 100,150,200</span>             <span class="cm">// Zemin rengi RGB</span>
+<span class="str">C 50,50,50</span>                <span class="cm">// Tavan rengi RGB</span>
+
+<span class="num">1 1 1 1 1 1 1</span>
+<span class="num">1</span> <span class="str">0 0 0 0 0</span> <span class="num">1</span>
+<span class="num">1</span> <span class="str">0 0</span> <span class="fn">N</span> <span class="str">0 0</span> <span class="num">1</span>             <span class="cm">// N = oyuncu, kuzeye bakiyor</span>
+<span class="num">1</span> <span class="str">0 0 0 0 0</span> <span class="num">1</span>
+<span class="num">1 1 1 1 1 1 1</span></pre>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>parse_file()</h4>
+        <p>Dosya uzantisi kontrolu (.cub), satirlari okur, config satirlarini (NO/SO/WE/EA/F/C) ayirir, haritayi ayri okur.</p>
+      </div>
+      <div class="info-card">
+        <h4>validate_map()</h4>
+        <p>Tam olarak 1 oyuncu (N/S/E/W), sadece gecerli karakterler (0, 1, bosluk, NSEW). Oyuncu pozisyonu ve acisini ayarlar.</p>
+      </div>
+      <div class="info-card">
+        <h4>validate_walls()</h4>
+        <p>Her bos hucrenin 4 komsusu kontrol edilir. Haritanin duvarlarla tamamen kapali olmasi gerekir.</p>
+      </div>
+      <div class="info-card">
+        <h4>Map Padding</h4>
+        <p>Satirlar farkli uzunlukta olabilir. Tum satirlar en genis satira gore boslukla doldurulur (DDA sinir kontrolu icin gerekli).</p>
+      </div>
+    </div>
+
+    <div class="formula">
+      <div class="label">Oyuncu Baslangic Pozisyonu</div>
+      <div class="expr">player_x = col + 0.5&nbsp;&nbsp;&nbsp;&nbsp;player_y = row + 0.5</div>
+    </div>
+    <p class="dim">+0.5 eklenerek oyuncu hucrenin ortasina yerlestirilir. Yon harfine gore aci ayarlanir: N=&minus;&pi;/2, S=&pi;/2, E=0, W=&pi;</p>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 08 CONSTANTS ════════════════════ -->
+<section id="constants">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">08 &mdash; Sabitler &amp; Onemli Degerler</span>
+    <h2 class="section-title">Sihirli sayilarin anlami</h2>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Sabit</th><th>Deger</th><th>Nerede</th><th>Neden</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>WIDTH</td><td>800</td><td>cub3d.h</td><td>Ekran genisligi = isin sayisi</td></tr>
+        <tr><td>HEIGHT</td><td>600</td><td>cub3d.h</td><td>Ekran yuksekligi</td></tr>
+        <tr><td>0.66</td><td>0.66</td><td>movement.c</td><td>Kamera duzlemi genisligi &rarr; ~66 derece FOV</td></tr>
+        <tr><td>speed</td><td>0.05</td><td>movement.c</td><td>Frame basina hareket birimi</td></tr>
+        <tr><td>buf</td><td>0.1</td><td>movement.c</td><td>Duvardan minimum mesafe (collision buffer)</td></tr>
+        <tr><td>rot_speed</td><td>0.03</td><td>movement.c</td><td>Frame basina donme acisi (radyan)</td></tr>
+        <tr><td>1e30</td><td>10<sup>30</sup></td><td>render.c</td><td>dir=0 oldugunda sonsuz mesafe (0'a bolunme onlemi)</td></tr>
+        <tr><td>0.0001</td><td>0.0001</td><td>render.c</td><td>Minimum dik mesafe (duvar yuksekligi tasmasi onlemi)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ 09 Q&A ════════════════════ -->
+<section id="qa">
+<div class="container">
+  <div class="reveal">
+    <span class="section-label">09 &mdash; Soru &amp; Cevap</span>
+    <h2 class="section-title">Evaluation'da cikmasi muhtemel sorular</h2>
+
+    <div class="qa-item">
+      <div class="qa-q">Fish-eye effect nedir ve nasil duzeltilir?</div>
+      <div class="qa-a"><div class="qa-a-inner">Ekran kenarlarindaki isinlar daha uzun mesafe kat eder (cunku acili firlatilir). Bu, kenarlardaki duvarlarin ortadan daha uzak gorunmesine neden olur &mdash; balik goz etkisi. Duzeltme: gercek isin mesafesi yerine kamera duzlemine <strong>dik mesafe</strong> (perpendicular distance) kullanilir. Kodda bu <code>side_x - delta_x</code> formulu ile implisit olarak uygulanir.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">DDA algoritmasi neden while icinde iki if var?</div>
+      <div class="qa-a"><div class="qa-a-inner">Isin her adimda ya X yonunde ya da Y yonunde ilerler &mdash; ikisi ayni anda olmaz. <code>side_x &lt; side_y</code> ise bir sonraki dikey grid cizgisi daha yakin demektir, X yonune adim atilir. Aksi halde Y yonune. Bu sayede isin hicbir hucreyi atlamadan grid uzerinde ilerler.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">0.66 sayisi nereden geliyor?</div>
+      <div class="qa-a"><div class="qa-a-inner">Kamera duzleminin genisligi. <code>atan(0.66/1) * 2 &asymp; 66 derece</code> FOV (goris acisi) verir. Daha buyuk deger = daha genis gorus, daha kucuk = tunel gorusu. 0.66 Wolfenstein 3D'nin orijinal degerine yakindir.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">Texture hangi duvara aitse nasil seciliyor?</div>
+      <div class="qa-a"><div class="qa-a-inner"><code>ray->side</code> isinin dikey (0) veya yatay (1) bir grid cizgisine carptigini belirtir. Side=0 ise isinin X yonu kontrol edilir: saga gidiyorsa dogu duvari (EA), sola gidiyorsa bati (WE). Side=1 ise asagi gidiyorsa guney (SO), yukari gidiyorsa kuzey (NO).</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">Neden mlx_key_hook yerine mlx_hook kullaniliyor?</div>
+      <div class="qa-a"><div class="qa-a-inner"><code>mlx_key_hook</code> sadece tus <strong>birakildiginda</strong> (KeyRelease) tetiklenir. Surekli hareket icin tusu basili tutarken hareket etmek gerekir. <code>mlx_hook(event=2)</code> tus basildiginda bir flag acar, <code>mlx_hook(event=3)</code> birakildiginda kapatir. <code>mlx_loop_hook</code> her frame'de bu flag'leri kontrol edip hareketi uygular.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">wall_height = HEIGHT / perpendicular_dist ne anlama geliyor?</div>
+      <div class="qa-a"><div class="qa-a-inner">Perspektif projeksiyonunun temelidir. Duvar 1 birim uzaktaysa ekranin tamami kadar yuksek gorunur (600px). 2 birim uzaktaysa yarisi (300px). 0.5 birim uzaktaysa iki kati (1200px, ekrandan tasar). Bu ters orantiyla yakin nesneler buyuk, uzak nesneler kucuk gorunur.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">Collision detection nasil calisiyor?</div>
+      <div class="qa-a"><div class="qa-a-inner">Grid tabanli: yeni pozisyonun etrafinda +0.1 ve -0.1 buffer noktalarinda duvar var mi diye kontrol edilir. X ve Y ayri ayri kontrol edilir, bu sayede duvara carparken diger yonde kayma (wall sliding) mumkun olur. Ornegin duvara capraz yaklasirken X engellense bile Y yonunde hareket devam eder.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">1e30 nedir ve neden kullaniliyor?</div>
+      <div class="qa-a"><div class="qa-a-inner"><code>delta_x = |1/dir_x|</code> formulunde dir_x = 0 olursa sonsuz olur. C'de bu NaN/Inf sorunlarina yol acar. Bunun yerine dir_x cok kucukse delta_x = 1e30 (cok buyuk bir sayi) atanir. Bu, isinin o yone hicbir zaman adim atmayacagi anlamina gelir.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">Harita neden duvarlarla cevrelenmeli?</div>
+      <div class="qa-a"><div class="qa-a-inner">DDA algoritmasi isin duvara carpana kadar grid uzerinde ilerler. Eger harita kapali degilse isin sonsuza kadar ilerleyebilir veya dizinin disina cikarak segfault verebilir. Padding ve bounds checking ile ek koruma saglanir ama temel guvenlik duvarlarla cevrili haritadir.</div></div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-q">put_pixel icindeki formul ne anlama geliyor?</div>
+      <div class="qa-a"><div class="qa-a-inner"><code>dst = img_data + (y * size_line) + (x * bpp / 8)</code>: img_data tek boyutlu byte dizisidir. <code>y * size_line</code> satirin baslangic byte'ini verir. <code>x * bpp/8</code> o satirdaki x. pikselin byte offset'ini verir (bpp=32 ise her piksel 4 byte). Sonuc olarak dst, yazilacak pikselin tam adresini gosterir.</div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════ FOOTER ════════════════════ -->
+<footer>
+  cub3D Evaluation Guide &mdash; 42 School
+</footer>
+
+<!-- ════════════════════ JS ════════════════════ -->
+<script>
+// ── Scroll reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Q&A toggle ──
+document.querySelectorAll('.qa-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const answer = item.querySelector('.qa-a');
+    if (item.classList.contains('open')) {
+      answer.style.maxHeight = '0';
+      item.classList.remove('open');
+    } else {
+      document.querySelectorAll('.qa-item.open').forEach(i => {
+        i.querySelector('.qa-a').style.maxHeight = '0';
+        i.classList.remove('open');
+      });
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  });
+});
+
+// ── DDA Canvas Animation ──
+const canvas = document.getElementById('ddaCanvas');
+const ctx = canvas.getContext('2d');
+const CELL = 50;
+const COLS = 9;
+const ROWS = 7;
+const OX = 30;
+const OY = 15;
+
+const map = [
+  [1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,1],
+  [1,0,0,1,0,0,1,0,1],
+  [1,0,0,0,0,0,0,0,1],
+  [1,0,1,0,0,0,0,0,1],
+  [1,0,0,0,0,0,1,0,1],
+  [1,1,1,1,1,1,1,1,1],
+];
+
+const player = { x: 1.5, y: 3.5 };
+let angle = -0.3;
+let animFrame = 0;
+
+function drawGrid() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // cells
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const x = OX + c * CELL;
+      const y = OY + r * CELL;
+      if (map[r][c] === 1) {
+        ctx.fillStyle = '#2a2a3a';
+        ctx.fillRect(x, y, CELL, CELL);
+      } else {
+        ctx.fillStyle = '#0d0d14';
+        ctx.fillRect(x, y, CELL, CELL);
+      }
+    }
+  }
+
+  // grid lines
+  ctx.strokeStyle = '#1e1e2e';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= COLS; i++) {
+    ctx.beginPath();
+    ctx.moveTo(OX + i * CELL, OY);
+    ctx.lineTo(OX + i * CELL, OY + ROWS * CELL);
+    ctx.stroke();
+  }
+  for (let i = 0; i <= ROWS; i++) {
+    ctx.beginPath();
+    ctx.moveTo(OX, OY + i * CELL);
+    ctx.lineTo(OX + COLS * CELL, OY + i * CELL);
+    ctx.stroke();
+  }
+}
+
+function castRay(a) {
+  const dirX = Math.cos(a);
+  const dirY = Math.sin(a);
+  let mapX = Math.floor(player.x);
+  let mapY = Math.floor(player.y);
+  const deltaX = Math.abs(1 / dirX);
+  const deltaY = Math.abs(1 / dirY);
+  const stepX = dirX > 0 ? 1 : -1;
+  const stepY = dirY > 0 ? 1 : -1;
+  let sideX = dirX > 0 ? (mapX + 1 - player.x) * deltaX : (player.x - mapX) * deltaX;
+  let sideY = dirY > 0 ? (mapY + 1 - player.y) * deltaY : (player.y - mapY) * deltaY;
+
+  const steps = [];
+  let side = 0;
+  for (let i = 0; i < 20; i++) {
+    if (sideX < sideY) {
+      sideX += deltaX;
+      mapX += stepX;
+      side = 0;
+    } else {
+      sideY += deltaY;
+      mapY += stepY;
+      side = 1;
+    }
+    steps.push({ x: mapX, y: mapY, side });
+    if (mapX < 0 || mapY < 0 || mapX >= COLS || mapY >= ROWS) break;
+    if (map[mapY][mapX] === 1) break;
+  }
+  return { steps, dirX, dirY };
+}
+
+function draw() {
+  animFrame++;
+  angle = -0.3 + Math.sin(animFrame * 0.008) * 0.5;
+
+  drawGrid();
+
+  // cast multiple rays for FOV visualization
+  const numRays = 15;
+  for (let i = 0; i < numRays; i++) {
+    const cam = 2 * i / numRays - 1;
+    const rDirX = Math.cos(angle) + (-Math.sin(angle) * 0.66) * cam;
+    const rDirY = Math.sin(angle) + (Math.cos(angle) * 0.66) * cam;
+    const ra = Math.atan2(rDirY, rDirX);
+    const { steps } = castRay(ra);
+
+    if (steps.length > 0) {
+      const last = steps[steps.length - 1];
+      const endX = OX + (last.x + 0.5) * CELL;
+      const endY = OY + (last.y + 0.5) * CELL;
+      const startX = OX + player.x * CELL;
+      const startY = OY + player.y * CELL;
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.strokeStyle = i === Math.floor(numRays / 2) ? '#ff6b35' : 'rgba(255,107,53,0.15)';
+      ctx.lineWidth = i === Math.floor(numRays / 2) ? 2 : 1;
+      ctx.stroke();
+    }
+  }
+
+  // highlight DDA steps for center ray
+  const { steps } = castRay(angle);
+  const maxSteps = Math.min(steps.length, Math.floor(animFrame / 12) % (steps.length + 4));
+  for (let i = 0; i < maxSteps && i < steps.length; i++) {
+    const s = steps[i];
+    const alpha = map[s.y] && map[s.y][s.x] === 1 ? 0.5 : 0.15;
+    ctx.fillStyle = s.side === 0 ? `rgba(255,209,102,${alpha})` : `rgba(6,214,160,${alpha})`;
+    ctx.fillRect(OX + s.x * CELL + 1, OY + s.y * CELL + 1, CELL - 2, CELL - 2);
+  }
+
+  // player dot
+  ctx.beginPath();
+  ctx.arc(OX + player.x * CELL, OY + player.y * CELL, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#ff6b35';
+  ctx.fill();
+
+  // direction arrow
+  ctx.beginPath();
+  ctx.moveTo(OX + player.x * CELL, OY + player.y * CELL);
+  ctx.lineTo(OX + player.x * CELL + Math.cos(angle) * 18, OY + player.y * CELL + Math.sin(angle) * 18);
+  ctx.strokeStyle = '#ff6b35';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // legend
+  ctx.font = '11px JetBrains Mono, monospace';
+  ctx.fillStyle = '#8a8a9a';
+  ctx.fillText('Sari = dikey grid gecisi (side=0)', OX, OY + ROWS * CELL + 18);
+  ctx.fillText('Yesil = yatay grid gecisi (side=1)', OX + 250, OY + ROWS * CELL + 18);
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>

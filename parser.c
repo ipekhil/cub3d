@@ -44,42 +44,19 @@ int	map_line(char *line)
 	return (0);
 }
 
-int parse_file(char *filename, t_game *game)
+static int	parse_config(int fd, t_game *game)
 {
-	int		fd;
 	char	*line;
-	int		i;
-	char	*padded_line; // Yeni eklendi
 
-	//uzantı kontrolü
-	if (!file_extension(filename))
-	{
-		ft_printf("Error\nInvalid file extension\n");
-		return (-1);
-	}
-	//map dosyasını açıyoruz
-	fd = open(filename, O_RDONLY);
-	if (fd < 0)
-	{
-		ft_printf("Error\nCannot open file\n");
-		return (-1);
-	}
-	//satır satır okuyoruz
 	line = get_next_line(fd, 0);
 	while (line)
 	{
-		//satır çeşidine bakıp aksiyon alıyoruz
-		if (empty_line(line))
-			;
-		else if (map_line(line))
-			;
-		else//baştaki 6 satır
+		if (!empty_line(line) && !map_line(line))
 		{
 			if (parse_texture_line(line, game) < 0)
 			{
 				free(line);
 				get_next_line(fd, 1);
-				close(fd);
 				return (-1);
 			}
 		}
@@ -87,6 +64,20 @@ int parse_file(char *filename, t_game *game)
 		line = get_next_line(fd, 0);
 	}
 	get_next_line(fd, 1);
+	return (0);
+}
+
+int	parse_file(char *filename, t_game *game)
+{
+	int	fd;
+
+	if (!file_extension(filename))
+		return (ft_printf("Error\nInvalid file extension\n"), -1);
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		return (ft_printf("Error\nCannot open file\n"), -1);
+	if (parse_config(fd, game) < 0)
+		return (close(fd), -1);
 	close(fd);
 	game->height = map_height(filename);
 	if (!game->height)
@@ -94,40 +85,9 @@ int parse_file(char *filename, t_game *game)
 	game->map = read_map(filename, game->height);
 	if (!game->map)
 		return (-1);
-	//seg faulttan sonra ekledim
-	i = 0;
-	game->width = 0; // Baştan sıfırlayalım
-	while (game->map[i])
-	{
-		if ((int)ft_strlen(game->map[i]) > game->width)
-			game->width = ft_strlen(game->map[i]);
-		i++;
-	}
-	//Tüm satırları en uzun satıra (game->width) eşitleme (DDA Güvenliği)
-	i = 0;
-	while (game->map[i])
-	{
-		if ((int)ft_strlen(game->map[i]) < game->width)
-		{
-			padded_line = malloc(sizeof(char) * (game->width + 1));
-			if (!padded_line) return (-1);
-			ft_memset(padded_line, ' ', game->width);
-			padded_line[game->width] = '\0';
-			ft_memcpy(padded_line, game->map[i], ft_strlen(game->map[i]));
-			free(game->map[i]);
-			game->map[i] = padded_line;
-		}
-		i++;
-	}
-	if (!validate_map(game))
+	if (pad_map(game) < 0)
 		return (-1);
-	if (!validate_walls(game))
+	if (!validate_map(game) || !validate_walls(game))
 		return (-1);
-	i = 0;
-	while (game->map[i])
-	{
-		printf("MAP[%d]: %s\n", i, game->map[i]);
-		i++;
-	}
 	return (0);
 }
