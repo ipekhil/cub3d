@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: staylan <staylan@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/09 18:47:50 by staylan           #+#    #+#             */
+/*   Updated: 2026/04/09 18:48:21 by staylan          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 static int	file_extension(char *filename)
@@ -11,7 +23,7 @@ static int	file_extension(char *filename)
 		return (0);
 	i -= 4;
 	if (!(filename[i] == '.' && filename[i + 1] == 'c'
-		&& filename[i + 2] == 'u' && filename[i + 3] == 'b'))
+			&& filename[i + 2] == 'u' && filename[i + 3] == 'b'))
 		return (0);
 	return (1);
 }
