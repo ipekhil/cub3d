@@ -121,6 +121,9 @@ static void	draw_column(t_game *game, t_ray *ray, int x, t_tex_img *tex)
 	double	tex_pos;
 	int		color;
 
+	//Sıfıra bölmeyi engellemek için mesafe kontrolü
+	if (ray->perpendicular_dist < 0.0001)
+		ray->perpendicular_dist = 0.0001;
 	wall_height = HEIGHT / ray->perpendicular_dist;//mesafesine göre duvarın uzunluğu perpendicular_dist ne kadar büyükse duvar o kadar kısa olur	
 	w_top = HEIGHT / 2 - wall_height / 2;//çizeceğimiz duvarın üst noktası
 	w_bottom = HEIGHT / 2 + wall_height / 2;//çizeceğimiz duvarın alt noktası
@@ -134,9 +137,10 @@ static void	draw_column(t_game *game, t_ray *ray, int x, t_tex_img *tex)
 		hit_point = game->player_y + ray->perpendicular_dist * ray->dir_y;
 	else
 		hit_point = game->player_x + ray->perpendicular_dist * ray->dir_x;
+	hit_point -= floor(hit_point);
 	//floor ile tam sayı kısmını atıp 0.0 - 1.0 arası değer elde ediyoruz onu da texture genişliği ile çarpıyoruz
 	//ve hangi sütunu çizeceğimizi buluyoruz
-	tex_x = (int)((hit_point - floor(hit_point)) * tex->width);
+	tex_x = (int)(hit_point * (double)tex->width);
 	//her ekran pikseli için texture'da kaç satır atlayacağız. 
 	//duvar ne kadar büüykse (wall_height) , step o kadar küçük olur çünkü duvarın her pikseli texture'da daha az satır atlar.
 	step = (double)tex->height / wall_height;
@@ -148,6 +152,8 @@ static void	draw_column(t_game *game, t_ray *ray, int x, t_tex_img *tex)
 	{
 		//tex_pos'u int'e çevirip texture'ın o satırından renk alıyoruz
 		tex_y = (int)tex_pos % tex->height;
+		if (tex_y < 0) 
+			tex_y = 0; //tex_pos duvara çok yaklaşıldığında negatşf olursa mod negatif çıkabilir ve negatif index hatası olabilir
 		//tex_pos'u step kadar artırarak bir sonraki piksel için texture'ın hangi satırını kullanacağımızı buluyoruz
 		tex_pos = tex_pos + step;
 		//texture'dan aldığımız rengi ekrana çiziyoruz

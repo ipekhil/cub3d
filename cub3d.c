@@ -2,6 +2,7 @@
 
 void init_game(t_game *game)
 {
+	ft_memset(game, 0, sizeof(t_game));//ft_memset(&game->tex, 0, sizeof(t_texture)); yerine bunu yaptık tüm parçalar sıfırlandı
 	game -> mlx = NULL;
 	game -> win = NULL;
 	game -> map = NULL;
@@ -13,7 +14,6 @@ void init_game(t_game *game)
 	game -> moves = 0;
 	game->dir_x = -1;
 	game->dir_y = 0;
-	ft_memset(&game->tex, 0, sizeof(t_texture));
 	game->img = NULL;
 	game->img_data = NULL;
 	game->bpp = 0;

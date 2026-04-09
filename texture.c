@@ -107,16 +107,20 @@ int	load_textures(t_game *game)
 
 t_tex_img	*get_texture(t_game *game, t_ray *ray)
 {
+	// X ekseninde bir duvara çarptıysa (Dikey çizgiler)
 	if (ray->side == 0)
 	{
-		if (ray->step_x == 1)
+		// Işın sağa gidiyorsa çarptığı yüzey Doğu (EA) texture'ını görmeli
+		if (ray->dir_x > 0)
 			return (&game->tex.ea);
 		else
 			return (&game->tex.we);
 	}
+	// Y ekseninde bir duvara çarptıysa (Yatay çizgiler)
 	else
 	{
-		if (ray->step_y == 1)
+		// Işın aşağı gidiyorsa çarptığı yüzey Güney (SO) texture'ını görmeli
+		if (ray->dir_y > 0)
 			return (&game->tex.so);
 		else
 			return (&game->tex.no);

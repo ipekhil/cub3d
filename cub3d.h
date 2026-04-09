@@ -12,8 +12,8 @@
 
 # include <stdio.h>///////
 
-# define WIDTH 400
-# define HEIGHT 300
+# define WIDTH 800
+# define HEIGHT 600
 
 typedef struct s_tex_img
 {

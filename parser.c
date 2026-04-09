@@ -49,6 +49,7 @@ int parse_file(char *filename, t_game *game)
 	int		fd;
 	char	*line;
 	int		i;
+	char	*padded_line; // Yeni eklendi
 
 	//uzantı kontrolü
 	if (!file_extension(filename))
@@ -95,10 +96,27 @@ int parse_file(char *filename, t_game *game)
 		return (-1);
 	//seg faulttan sonra ekledim
 	i = 0;
+	game->width = 0; // Baştan sıfırlayalım
 	while (game->map[i])
 	{
 		if ((int)ft_strlen(game->map[i]) > game->width)
 			game->width = ft_strlen(game->map[i]);
+		i++;
+	}
+	//Tüm satırları en uzun satıra (game->width) eşitleme (DDA Güvenliği)
+	i = 0;
+	while (game->map[i])
+	{
+		if ((int)ft_strlen(game->map[i]) < game->width)
+		{
+			padded_line = malloc(sizeof(char) * (game->width + 1));
+			if (!padded_line) return (-1);
+			ft_memset(padded_line, ' ', game->width);
+			padded_line[game->width] = '\0';
+			ft_memcpy(padded_line, game->map[i], ft_strlen(game->map[i]));
+			free(game->map[i]);
+			game->map[i] = padded_line;
+		}
 		i++;
 	}
 	if (!validate_map(game))
