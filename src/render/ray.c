@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ray.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: staylan <staylan@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:44:46 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/09 18:44:48 by staylan          ###   ########.fr       */
+/*   Updated: 2026/04/11 18:58:27 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../../cub3d.h"
 
 static void	init_ray_dir(t_game *game, t_ray *ray, int x)
 {

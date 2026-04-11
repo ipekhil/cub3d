@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   validation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: staylan <staylan@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:45:35 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/09 18:45:38 by staylan          ###   ########.fr       */
+/*   Updated: 2026/04/11 18:58:30 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../../cub3d.h"
 
 static int	check_map_cell(t_game *game, int row, int col, int *player_count)
 {

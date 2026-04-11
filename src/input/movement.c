@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   movement.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: staylan <staylan@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:46:11 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/09 20:17:20 by staylan          ###   ########.fr       */
+/*   Updated: 2026/04/11 18:59:04 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../../cub3d.h"
 
 static int	wall_at(t_game *game, double x, double y)
 {

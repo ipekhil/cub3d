@@ -6,11 +6,11 @@
 /*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:46:55 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/11 13:30:00 by hiipek           ###   ########.fr       */
+/*   Updated: 2026/04/11 19:01:54 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 void	init_game(t_game *game)
 {

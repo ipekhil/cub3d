@@ -6,21 +6,21 @@
 /*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:46:29 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/11 12:31:56 by hiipek           ###   ########.fr       */
+/*   Updated: 2026/04/11 19:01:04 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# include "mlx/mlx.h"
+# include "mlx.h"
 # include <stdlib.h>
 # include <math.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include "./libft/libft.h"
-# include "./get_next_line/get_next_line.h"
-# include "./printf/printf.h"
+# include "libft.h"
+# include "get_next_line.h"
+# include "printf.h"
 
 # define WIDTH 800
 # define HEIGHT 600

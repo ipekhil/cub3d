@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   texture_load.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: staylan <staylan@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:45:09 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/09 18:45:11 by staylan          ###   ########.fr       */
+/*   Updated: 2026/04/11 18:58:50 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../../cub3d.h"
 
 static int	one_load_texture(t_game *game, t_tex_img *tex_img, char *path)
 {
@@ -42,4 +42,22 @@ int	load_textures(t_game *game)
 	free(game->tex.ea_path);
 	game->tex.ea_path = NULL;
 	return (0);
+}
+
+t_tex_img	*get_texture(t_game *game, t_ray *ray)
+{
+	if (ray->side == 0)
+	{
+		if (ray->dir_x > 0)
+			return (&game->tex.ea);
+		else
+			return (&game->tex.we);
+	}
+	else
+	{
+		if (ray->dir_y > 0)
+			return (&game->tex.so);
+		else
+			return (&game->tex.no);
+	}
 }

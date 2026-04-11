@@ -6,11 +6,11 @@
 /*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:47:50 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/11 14:05:18 by hiipek           ###   ########.fr       */
+/*   Updated: 2026/04/11 18:58:58 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../../cub3d.h"
 
 static int	file_extension(char *filename)
 {

@@ -6,11 +6,11 @@
 /*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:45:27 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/11 14:36:38 by hiipek           ###   ########.fr       */
+/*   Updated: 2026/04/11 19:01:06 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../../cub3d.h"
 
 void	free_map(char **map)
 {
