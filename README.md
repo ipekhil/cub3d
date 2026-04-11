@@ -35,6 +35,7 @@ Clone the repository and run:
 git clone <repository-url>
 cd cub3d
 make
+```
 
 Available Makefile targets:
 
