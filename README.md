@@ -35,6 +35,30 @@ Clone the repository and run:
 git clone <repository-url>
 cd cub3d
 make
-TargetDescriptionmakeCompiles the projectmake cleanRemoves object filesmake fcleanRemoves objects and the executable binarymake rePerforms a full recompilation (clean + all)ExecutionBash./cub3D <path_to_map.cub>
-Example:Bash./cub3D maps/office.cub
-ControlsKeyActionW, A, S, DMovement (Forward, Left, Back, Right)← / →Camera Rotation (Left/Right)ESCQuit the gameResourcesRay-Casting & 3D RenderingLode's Raycasting Tutorial — The primary technical reference used for understanding the DDA algorithm and wall texture mapping.miniLibX Documentation (42 Docs) — Official guide for using the miniLibX graphics library in the 42 curriculum.Wolfenstein 3D Mechanics — Contextual and historical information about the game that inspired this project.AI UsageAI assistance (via Claude) was utilized during the development of this project for the following specific tasks:Mathematical Concept Clarification: Used to break down the trigonometric and algebraic calculations required for the DDA ray-casting logic and camera projection.Debugging and Logic: Provided assistance in identifying potential edge cases for map validation and reviewing the overall logic of the rendering loop.Documentation: Aided in structuring and refining the technical descriptions within this README file to ensure clarity and professional standards
+
+Available Makefile targets:
+
+make — Compiles the project and generates the cub3D executable.
+
+make clean — Removes all object files.
+
+make fclean — Removes object files and the executable binary.
+
+make re — Recompiles the entire project from scratch.
+
+Resources
+Ray-Casting & 3D Rendering
+Lode's Raycasting Tutorial — The primary technical reference for the DDA algorithm and wall texture mapping.
+
+miniLibX Documentation (42 Docs) — Official guide for using the miniLibX graphics library.
+
+Wolfenstein 3D Mechanics — Contextual and historical information about the game.
+
+AI Usage
+AI assistance (via Claude) was utilized during the development of this project for the following tasks:
+
+Mathematical Concept Clarification: Used to break down the trigonometric calculations required for the DDA ray-casting logic.
+
+Debugging and Logic: Provided assistance in identifying edge cases for map validation and reviewing the rendering loop.
+
+Documentation: Aided in structuring and refining the technical descriptions within this README file.
