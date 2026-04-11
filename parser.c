@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: staylan <staylan@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:47:50 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/09 18:48:21 by staylan          ###   ########.fr       */
+/*   Updated: 2026/04/11 14:05:18 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	map_line(char *line)
 	int	i;
 
 	if (empty_line(line))
-		return (0);
+		return (1);
 	i = 0;
 	while (line[i] == ' ' || line[i] == '1' || line[i] == '0'
 		|| line[i] == 'N' || line[i] == 'S' || line[i] == 'E'
@@ -67,6 +67,7 @@ static int	parse_config(int fd, t_game *game)
 		{
 			if (parse_texture_line(line, game) < 0)
 			{
+				ft_printf("Error\nInvalid line\n");
 				free(line);
 				get_next_line(fd, 1);
 				return (-1);

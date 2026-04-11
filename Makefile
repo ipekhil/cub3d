@@ -22,6 +22,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	make -C $(MLX_DIR)
+	make -C $(LIBFT_DIR)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX_FLAGS) $(INCLUDES) -o $(NAME)
 
 %.o: %.c
@@ -29,9 +30,11 @@ $(NAME): $(OBJS)
 
 clean:
 	make clean -C $(MLX_DIR)
+	make clean -C $(LIBFT_DIR)
 	rm -f $(OBJS)
 
 fclean: clean
+	make fclean -C $(LIBFT_DIR)
 	rm -f $(NAME)
 
 re: fclean all

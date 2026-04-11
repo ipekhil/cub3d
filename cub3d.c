@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: staylan <staylan@student.42istanbul.com    +#+  +:+       +#+        */
+/*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:46:55 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/09 20:18:04 by staylan          ###   ########.fr       */
+/*   Updated: 2026/04/11 13:30:00 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,10 @@ static int	init_mlx(t_game *game)
 	if (!game->mlx)
 		return (-1);
 	if (load_textures(game) == -1)
+	{
+		ft_printf("Error\nFailed to load textures\n");
 		return (-1);
+	}
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3d");
 	if (!game->win)
 		return (-1);
