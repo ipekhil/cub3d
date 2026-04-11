@@ -37,7 +37,7 @@ cd cub3d
 make
 ```
 
-Available Makefile targets:
+#### Available Makefile targets:
 
 make — Compiles the project and generates the cub3D executable.
 
@@ -47,7 +47,8 @@ make fclean — Removes object files and the executable binary.
 
 make re — Recompiles the entire project from scratch.
 
-Resources
+## Resources
+
 Ray-Casting & 3D Rendering
 Lode's Raycasting Tutorial — The primary technical reference for the DDA algorithm and wall texture mapping.
 
@@ -55,7 +56,7 @@ miniLibX Documentation (42 Docs) — Official guide for using the miniLibX graph
 
 Wolfenstein 3D Mechanics — Contextual and historical information about the game.
 
-AI Usage
+## AI Usage
 AI assistance (via Claude) was utilized during the development of this project for the following tasks:
 
 Mathematical Concept Clarification: Used to break down the trigonometric calculations required for the DDA ray-casting logic.
