@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by [YOUR_USER_NAME].*
+*This project has been created as part of the 42 curriculum by hiipek and staylan.*
 
 # cub3D — My First RayCaster with miniLibX
 
@@ -56,7 +56,6 @@ miniLibX Documentation (42 Docs) — Official guide for using the miniLibX graph
 
 Wolfenstein 3D Mechanics — Contextual and historical information about the game.
 
-## AI Usage
 AI assistance (via Claude) was utilized during the development of this project for the following tasks:
 
 Mathematical Concept Clarification: Used to break down the trigonometric calculations required for the DDA ray-casting logic.
