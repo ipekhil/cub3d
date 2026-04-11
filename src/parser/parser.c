@@ -6,7 +6,7 @@
 /*   By: hiipek <hiipek@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/09 18:47:50 by staylan           #+#    #+#             */
-/*   Updated: 2026/04/11 18:58:58 by hiipek           ###   ########.fr       */
+/*   Updated: 2026/04/11 20:03:22 by hiipek           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,20 +59,21 @@ int	map_line(char *line)
 static int	parse_config(int fd, t_game *game)
 {
 	char	*line;
+	int		map_started;
 
+	map_started = 0;
 	line = get_next_line(fd, 0);
 	while (line)
 	{
-		if (!empty_line(line) && !map_line(line))
-		{
-			if (parse_texture_line(line, game) < 0)
-			{
-				ft_printf("Error\nInvalid line\n");
-				free(line);
-				get_next_line(fd, 1);
-				return (-1);
-			}
-		}
+		if (!empty_line(line) && !map_line(line) && map_started)
+			return (free(line), get_next_line(fd, 1),
+				ft_printf("Error\nConfig element after map\n"), -1);
+		if (!empty_line(line) && map_line(line))
+			map_started = 1;
+		if (!empty_line(line) && !map_line(line)
+			&& parse_texture_line(line, game) < 0)
+			return (free(line), get_next_line(fd, 1),
+				ft_printf("Error\nInvalid line\n"), -1);
 		free(line);
 		line = get_next_line(fd, 0);
 	}
